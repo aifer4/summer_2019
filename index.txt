@@ -1,0 +1,14 @@
+
+Jupyter Notebooks:
+
+> `2fluid-v0.ipynb`
+Computes source terms and $C_\ell$ spectrum for the two fluid model ($\Lambda$CDM with tight coupling between baryons and photons and no neutrinos). This implementation is almost exactly the same as in tristan's mathematica notebook. A key difference is that interpolation and normalization of the $C_\ell$ values is done differently to fix low-$\ell$ $C_\ell$ values. Computation of the mode evolutions and source  terms is pretty fast,  but the $C_\ell$ is slow. Computing $C_\ell$ from the source terms takes over a minute.
+
+> '2fluid-v1.ipynb'
+Computes source terms and $C_\ell$ spectrum for the two fluid model ($\Lambda$CDM with tight coupling between baryons and photons and no neutrinos). This implementation improves upon 2fluid_v0 by precomputing bessel functions and their derivatives, leading to a signficant speedup in computing the $C_\ell$ power spectrum. Also, $a_{eq}$ has been changed from OmegaGamma/OmegaM to OmegaRad/OmegaM.
+
+> `3fluid-v0.ipynb`
+Computes source terms and $C_\ell$ spectrum for the three fluid model (same as two fluid model but neutrinos are included).
+
+> /dev/:
+directory with some files that are still in development (i.e. don't really work or aren't useful at the moment but aren't bad enough to be deleted).
