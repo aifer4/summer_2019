@@ -30,11 +30,11 @@ a_eq  = Ωr0/Ωm0
 τ0 = .001 / (H0 * 1000)
 
 k_low = .1
-k_high=100000
+k_high=50000
 
 
 N = 100
-NMIN = 100
+NMIN = 600
 K_SOLVE = 100
 K_INT = 10000
 
