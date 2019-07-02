@@ -34,7 +34,7 @@ k_high=100000
 
 
 N = 100
-NMIN = 400
+NMIN = 1000
 K_SOLVE = 200
 K_INT = 10000
 
