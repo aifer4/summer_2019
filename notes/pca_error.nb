@@ -1,0 +1,124 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3575,        116]
+NotebookOptionsPosition[      2944,         99]
+NotebookOutlinePosition[      3320,        115]
+CellTagsIndexPosition[      3277,        112]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.7716808289106183`*^9, 
+  3.771680834453127*^9}},ExpressionUUID->"ecc1c140-b25c-477d-8090-\
+212b82d803c7"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{
+    SubscriptBox["argmax", "\[Theta]"], 
+    RowBox[{"p", "(", 
+     RowBox[{"x", "|", "\[Theta]"}], ")"}], 
+    RowBox[{"p", "(", "\[Theta]", ")"}]}], " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     SubscriptBox["argmax", "\[Theta]"], "log", " ", 
+     RowBox[{"p", "(", 
+      RowBox[{"x", "|", "\[Theta]"}], ")"}]}], "+", " ", 
+    RowBox[{"log", " ", 
+     RowBox[{"p", "(", "\[Theta]", ")"}], " "}]}]}], 
+  TraditionalForm]], "DisplayFormula",
+ CellChangeTimes->{{3.771716766316599*^9, 
+  3.7717168270816383`*^9}},ExpressionUUID->"d2b9261a-e23b-4fdd-afc7-\
+470c39840514"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{"=", " ", 
+   RowBox[{
+    SubscriptBox["argmax", "\[Theta]"], "-", 
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"x", "-", "\[Mu]"}], ")"}], "T"], 
+     RowBox[{
+      SuperscriptBox["\[CapitalSigma]", 
+       RowBox[{"-", "1"}]], "(", 
+      RowBox[{"x", "-", "\[Mu]"}], ")"}]}], "-", 
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"\[Theta]", "-", 
+        SubscriptBox["\[Theta]", "0"]}], ")"}], "T"], 
+     RowBox[{
+      SuperscriptBox[
+       SubscriptBox["\[CapitalSigma]", "\[Pi]"], 
+       RowBox[{"-", "1"}]], "(", 
+      RowBox[{"\[Theta]", "-", 
+       SubscriptBox["\[Theta]", "0"]}], ")"}]}]}]}], 
+  TraditionalForm]], "DisplayFormula",
+ CellChangeTimes->{{3.771716766316599*^9, 
+  3.771716925406865*^9}},ExpressionUUID->"3dcb3600-7743-426e-9fe2-\
+c875d7a7effe"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{"=", " ", 
+   RowBox[{
+    SubscriptBox["argmax", "\[Theta]"], "-", 
+    RowBox[{
+     SuperscriptBox["x", "T"], 
+     SuperscriptBox["\[CapitalSigma]", 
+      RowBox[{"-", "1"}]], "x"}], "-", 
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"\[Theta]", "-", 
+        SubscriptBox["\[Theta]", "0"]}], ")"}], "T"], 
+     RowBox[{
+      SuperscriptBox[
+       SubscriptBox["\[CapitalSigma]", "\[Pi]"], 
+       RowBox[{"-", "1"}]], "(", 
+      RowBox[{"\[Theta]", "-", 
+       SubscriptBox["\[Theta]", "0"]}], ")"}]}]}]}], 
+  TraditionalForm]], "DisplayFormula",
+ CellChangeTimes->{{3.771716766316599*^9, 
+  3.771716945173239*^9}},ExpressionUUID->"feb1ca81-c1d2-4750-a511-\
+0a1cff2d1424"]
+},
+WindowSize->{931, 817},
+WindowMargins->{{-3, Automatic}, {13, Automatic}},
+Magnification:>2. Inherited,
+FrontEndVersion->"11.2 for Microsoft Windows (64-bit) (September 10, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 154, 3, 57, "Input",ExpressionUUID->"ecc1c140-b25c-477d-8090-212b82d803c7"],
+Cell[715, 25, 621, 18, 54, "DisplayFormula",ExpressionUUID->"d2b9261a-e23b-4fdd-afc7-470c39840514"],
+Cell[1339, 45, 858, 27, 52, "DisplayFormula",ExpressionUUID->"3dcb3600-7743-426e-9fe2-c875d7a7effe"],
+Cell[2200, 74, 740, 23, 52, "DisplayFormula",ExpressionUUID->"feb1ca81-c1d2-4750-a511-0a1cff2d1424"]
+}
+]
+*)
+
