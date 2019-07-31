@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-
-"""Background Cosmology"""
+"""This file provides several functions which are used to
+evaluate background quantities."""
 
 from params import *
 from scipy import integrate
@@ -20,10 +19,11 @@ def get_τ(a):
 τ_eq = get_τ(a_eq)
 τ_now = get_τ(1.0)
 
-ℋ = lambda τ: 2*α*(α*τ/τr + 1)/(α**2 * (τ**2/τr))
+ℋ = lambda τ: 2*α*(α*τ/τr + 1)/(α**2 * (τ**2/τr) + 2*α*τ)
 a = lambda τ: a_eq*((α*τ/τr)**2 + 2*α*τ/τr)
 y = lambda τ: a(τ)/a_eq
 yb = lambda τ: 1.68*y(τ)*Ωb0/Ωm0
+ΔΦ = (2 - 8/y(τ_rec) + 16 *(τ_rec/τr)/y(τ_rec)**3)/(10* y(τ_rec))
 
 Ωb = lambda τ: Ωb0 * a(τ)**-3.
 Ωc = lambda τ: Ωc0 * a(τ)**-3.
@@ -32,6 +32,6 @@ yb = lambda τ: 1.68*y(τ)*Ωb0/Ωm0
 Ωm = lambda τ: Ωm0 * a(τ)**-3.
 Ωr = lambda τ: Ωr0 * a(τ)**-4.
 Ωd = lambda τ: Ωc(τ) + Ων(τ)
-
+   
 
 
