@@ -55,10 +55,10 @@ a_eq  = Ωr0/Ωm0
 # Numerical Settings
 τ0 = 1.e-7 # initial time
 k_low = 1  # lowest wavenumber
-k_high= 1000# highest wavenumber
+k_high= # highest wavenumber
 N = 2**12 # number of points used to solve the ODE
 K_SOLVE = 256 # number of wavenumbers for which to solve the  ODE
-K_INT = 10000 #number of wavenumbers at which to evaluate bessel functions/integrate Cl
+K_INT = 10000 # number of wavenumbers at which to evaluate bessel functions/integrate Cl
 
 
 # Plot Settings
