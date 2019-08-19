@@ -47,18 +47,21 @@ a_rec = 1/(1+z_rec)
 a_eq  = Ωr0/Ωm0
 
 τr = 1/(np.sqrt(Ωm0/a_rec)*H0/2)
-τs = 0.6*Ωm0**(.25) * Ωb0**(-.5)*a_rec**(.75)*(H0/100)**(-.5)*τr
 τs = 0.6*Ωm0**(.25) * Ωb0**(-.5)*a_rec**(.75)*(.67)**(-.5)*τr
 α = np.sqrt(a_rec/a_eq)
 
 
 # Numerical Settings
-τ0 = 1.e-7 # initial time
+τ0 = 1.e-7 # start time for mode evolution
+τ0_pca = 1.e-5 # earliest time for which w is varied in PCA
 k_low = 1  # lowest wavenumber
-k_high= # highest wavenumber
+k_high = 1000 # highest wavenumber
 N = 2**12 # number of points used to solve the ODE
 K_SOLVE = 256 # number of wavenumbers for which to solve the  ODE
 K_INT = 10000 # number of wavenumbers at which to evaluate bessel functions/integrate Cl
+
+settings = {'cosmic variance only': False,
+           'dark matter only': False}
 
 
 # Plot Settings
