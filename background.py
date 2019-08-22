@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
-"""This file provides several functions which are used to
-evaluate background quantities."""
+"""Evaluate background quantities."""
 
 from params import *
 from scipy import integrate
 import numpy as np
+
 
 def τ_itgd(a):
     """conformal time integrand"""

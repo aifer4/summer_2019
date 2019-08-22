@@ -56,7 +56,7 @@ a_eq  = Ωr0/Ωm0
 τ0_pca = 1.e-5 # earliest time for which w is varied in PCA
 k_low = 1  # lowest wavenumber
 k_high = 1000 # highest wavenumber
-N = 2**12 # number of points used to solve the ODE
+N_SOLVE = 2**12 # number of points used to solve the ODE
 K_SOLVE = 256 # number of wavenumbers for which to solve the  ODE
 K_INT = 10000 # number of wavenumbers at which to evaluate bessel functions/integrate Cl
 
