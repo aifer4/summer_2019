@@ -11,7 +11,7 @@ from bg import *
 
 tau_solve = np.array([1,2,3])
 
-def DY_3fld(τ, Y):
+def DY_3fld(i, Y):
     dY = np.zeros((7, K_SOLVE))
     Φ = Y[0, :]
     δɣ = Y[1, :]

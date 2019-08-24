@@ -52,7 +52,7 @@ a_eq  = Ωr0/Ωm0
 
 
 # Numerical Settings
-τ0 = 1.e-7 # start time for mode evolution
+τ0 = 1.e-3 # start time for mode evolution
 τ0_pca = 1.e-5 # earliest time for which w is varied in PCA
 k_low = 1  # lowest wavenumber
 k_high = 1000 # highest wavenumber

@@ -2,48 +2,60 @@
 
 import par
 from scipy import integrate
+from scipy.optimize import root
 import numpy as np
 import numba
 import numops
+      
+myparams = par.MLparams
 
-myparams = np.zeros(6 + par.NC + par.NC**2)
 
-A = np.linspace(0, par.a_rec, par.N_SOLVE)
-
-def tau_itgd_ML(a):
+def tau_itgd_early(a):
     # conformal time integrand valid for tau < tau0_pca (when wd = wd_ML).
     return  1/(a**2* par.H0 * np.sqrt(
         par.OmegaM0*a**-3 + par.OmegaR0*a**-4 + par.OmegaL0)
         )
 
-def get_τ(a):
-    (τ,_)=integrate.quad(τ_itgd,0,a)
-    return τ
+@np.vectorize
+def get_tau_early(a):
+    (tau,_)=integrate.quad(tau_itgd_early,0,a)
+    return tau
 
 # Find value of scale factor for which tau = tau_0.
+a0 = root(lambda a: get_tau_early(a) - par.tau0, par.tau0).x[0]
+A = np.linspace(a0, par.a_rec, par.N_SOLVE)
+
+@numba.njit 
+def get_OmegaD(params):
+    wd = numops.get_w_square(params[6:6+par.NC])
+    OmegaD = np.zeros(par.N_SOLVE)
+    s = -3*numops.trapz(A, (1+wd)/A)
+    OmegaD = par.OmegaD_tau0 * np.exp(s)
+    return OmegaD
 
 @numba.njit
 def get_H(params):
-    OmegaB0, OmegaC0, OmegaG0, OmegaN0, OmegaL0, OmegaD0 = params[0:6]
-    wd = numops.get_w_square(params[6 : 6+par.NC])
-    OmegaD = 
-
-    Ωd_a = Ωd_τ0 * np.exp(-3*
-        integrate.cumtrapz((1+wd)/a_list,a_list, initial=0)
-                      )
-    H_a =  H0 *np.sqrt(Ωb0*a_list**-3 + Ωɣ0*a_list**-4 + Ωd_a + ΩΛ)*a_list
-    τ_a =  integrate.cumtrapz(1/(a_list * H_a), a_list,initial=0)+τ0
-    a_ =  interp1d(τ_a, a_list, kind='quadratic',fill_value='extrapolate')
-    H_ = interp1d(τ_a, H_a, kind='quadratic',fill_value='extrapolate')
-    Ωd_ = interp1d(τ_a, Ωd_a, kind='quadratic',fill_value='extrapolate')
-    
-    return par.OmegaR0
-
-get_H(myparams)
+    H = np.zeros(par.N_SOLVE)
+    OmegaB0, OmegaC0, OmegaG0, OmegaN0, OmegaL0, OmegaD_tau0 = params[0:6]
+    OmegaD = get_OmegaD(params)
+    OmegaM0 = OmegaB0 + OmegaC0
+    OmegaR0 = OmegaG0 + OmegaN0
+    H = A * par.H0 * np.sqrt(OmegaM0*A**-3 + OmegaR0*A**-4 +  OmegaL0 + OmegaD)
+    return H
 
 @numba.njit
 def get_TAU(params):
-    return par.OmegaR0
+    H = get_H(params)
+    TAU =  par.tau0 + numops.trapz(A, 1/(A * H))
+    return TAU
 
-
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    H = get_H(myparams)
+    OmD = get_OmegaD(myparams)
+    tau = get_TAU(myparams)
+    plt.plot(A,H)
+    plt.show()
+    plt.plot(A,tau)
+    plt.show()
 

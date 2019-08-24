@@ -24,9 +24,10 @@ def get_cs2_square(theta_cs2):
 
 @numba.njit
 def trapz(x,f):
-    F = np.zeros(par.N_SOLVE)
+    N = len(f)
+    F = np.zeros(N)
     F[0] = 0
-    for i in range(1, par.N_SOLVE):
+    for i in range(1, N):
         F[i] = F[i-1] + (x[i]-x[i-1])*(f[i]+f[i-1])/2
     return F
 
