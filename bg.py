@@ -23,19 +23,19 @@ def get_tau_early(a):
 
 # Find value of scale factor for which tau = tau_0.
 a0 = root(lambda a: get_tau_early(a) - par.tau0, par.tau0).x[0]
-A = np.linspace(a0, par.a_rec, par.N_SOLVE)
+A = np.linspace(a0, par.a_rec, par.N_T_SOLVE)
 
 @numba.njit 
 def get_OmegaD(params):
     wd = numops.get_w_square(params[6:6+par.NC])
-    OmegaD = np.zeros(par.N_SOLVE)
+    OmegaD = np.zeros(par.N_T_SOLVE)
     s = -3*numops.trapz(A, (1+wd)/A)
     OmegaD = par.OmegaD_tau0 * np.exp(s)
     return OmegaD
 
 @numba.njit
 def get_H(params):
-    H = np.zeros(par.N_SOLVE)
+    H = np.zeros(par.N_T_SOLVE)
     OmegaB0, OmegaC0, OmegaG0, OmegaN0, OmegaL0, OmegaD_tau0 = params[0:6]
     OmegaD = get_OmegaD(params)
     OmegaM0 = OmegaB0 + OmegaC0
