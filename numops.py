@@ -13,6 +13,12 @@ def get_w_square(theta_w):
         w[i*width:(i+1)*width] = theta_w[i]
     return w
 
+def square_rep_1d(vals, NUM_PTS, NUM_BINS):
+    width = NUM_PTS//NUM_BINS
+    f = np.zeros(NUM_PTS)
+    for i in range(NUM_BINS):
+        f[i*width:(i+1)*width] = vals[i]
+    return f
 
 @numba.njit
 def get_cs2_square(theta_cs2):
@@ -22,6 +28,7 @@ def get_cs2_square(theta_cs2):
         cs2[r*width:(r+1)*width, c*height:(c+1)*height] = theta_cs2[i]
     return cs2
 
+# trapezoidal rule implementation
 @numba.njit
 def trapz(x,f):
     N = len(f)

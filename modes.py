@@ -22,7 +22,7 @@ OmegaD = bg.get_OmegaD(par.MLparams)
 [OmegaB0, OmegaC0, OmegaG0, OmegaN0, OmegaL0, OmegaD_tau0] = par.MLparams[0:6]
 a_eq = (OmegaG0 + OmegaN0)/(OmegaB0 + OmegaC0)
 
-@numba.njit
+@numba.njit(cache=True)
 def DY_3fld(i, Y):
     dY = np.zeros((7, par.N_K_SOLVE))
     phi = Y[0, :]
@@ -68,7 +68,7 @@ def DY_3fld(i, Y):
 
     return dY
 
-@numba.njit
+@numba.njit(cache=True)
 def solve_3fld(params):
     # get background qualities
     H = bg.get_H(params)
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     Y = solve_3fld(par.MLparams)
     print(np.shape(Y))
-    plt.plot(Y[0,:, 200])
+    plt.plot(Y[:,0, 200])
     plt.show()
     
     
