@@ -38,6 +38,15 @@ def trapz(x,f):
         F[i] = F[i-1] + (x[i]-x[i-1])*(f[i]+f[i-1])/2
     return F
 
+# 1d derivative
+@numba.njit
+def deriv(x,f):
+    df = np.zeros(len(f))
+    df[1:] = np.diff(f)/np.diff(x)
+    df[0] = df[1]
+    return df
+
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     w = get_w_square(np.random.randn(par.NC))

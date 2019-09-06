@@ -5,8 +5,8 @@ tau0 = 1.e-6 # start time for mode evolution
 tau0_pca = 1.e-5 # earliest time for which w is varied in PCA
 k_low = 1  # lowest wavenumber
 k_high = 1000 # highest wavenumber
-N_T_SOLVE = 2**12 # number of points used to solve the ODE
-N_K_SOLVE = 256 # number of wavenumbers for which to solve the  ODE
+NT = 2**11 # number of points used to solve the ODE
+NK = 256 # number of wavenumbers for which to solve the  ODE
 N_K_INT = 10000 # number of wavenumbers at which to evaluate bessel functions/integrate Cl
 
 # PCA settings
@@ -23,12 +23,12 @@ OmegaN0 = 3.74248e-5
 
 OmegaR0 = OmegaG0 + OmegaN0
 OmegaM0 = OmegaB0 + OmegaC0
-OmegaL  = 1-(OmegaM0 + OmegaR0)
-deltaD0 = np.zeros(N_K_SOLVE)
-vD0 = np.zeros(N_K_SOLVE)
+OmegaL0  = 1-(OmegaM0 + OmegaR0)
+deltaD0 = np.zeros(NK)
+vD0 = np.zeros(NK)
 
-wD = np.zeros(N_T_SOLVE)
-cs2D = np.zeros((N_T_SOLVE, N_K_SOLVE))
+wD = np.zeros(NT)
+cs2D = np.zeros((NT, NK))
 theta_w = np.zeros(NC)
 theta_cs2 = np.zeros((NC**2))
 As = np.exp(3.064)/1.e10
@@ -49,7 +49,7 @@ MLparams = {'OmegaB0': OmegaB0,
             'OmegaC0': OmegaC0,
             'OmegaG0': OmegaG0,
             'OmegaN0': OmegaN0,
-            'OmegaL': OmegaL,
+            'OmegaL0': OmegaL0,
             'OmegaD_tau0': 0,
             'deltaD0':deltaD0,
             'vD0': vD0,

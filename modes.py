@@ -2,111 +2,190 @@
 Perform mode evolution using 3-fluid (Seljak's 2-fluid + neutrinos) and GDM (Generalized Dark Matter).
 
 Interface:
-solve_3f
 
-solve_gdm
 """
 import numpy as np
-import bg
 import par
 import numba
 
-# coordinate arrays
-TAU = bg.get_TAU(par.MLparams)
-K = np.linspace(par.k_low, par.k_high, par.N_K_SOLVE)
-A = bg.A
+# Helper functions:
+# Below are implementations of the trapezoidal rule and the forward-difference
+# derivative, in numba compiled functions. These are necessary because numba
+# won't compile functions that use scipy.cumtrapz or numpy.gradient.
+@numba.njit
+def trapz(x,f):
+    N = len(f)
+    F = np.zeros(N)
+    F[0] = 0
+    for i in range(1, N):
+        F[i] = F[i-1] + (x[i]-x[i-1])*(f[i]+f[i-1])/2
+    return F
 
-# initialize background quantities
-H = bg.get_H(par.MLparams)
-OmegaD = bg.get_OmegaD(par.MLparams)
-[OmegaB0, OmegaC0, OmegaG0, OmegaN0, OmegaL0, OmegaD_tau0] = par.MLparams[0:6]
-a_eq = (OmegaG0 + OmegaN0)/(OmegaB0 + OmegaC0)
+@numba.njit
+def deriv(x,f):
+    df = np.zeros(len(f))
+    df[1:] = np.diff(f)/np.diff(x)
+    df[0] = df[1]
+    return df
 
-@numba.njit(cache=True)
-def DY_3fld(i, Y):
-    dY = np.zeros((7, par.N_K_SOLVE))
-    phi = Y[0, :]
-    delta_g = Y[1, :]
-    v_g = Y[2, :]
-    delta_c = Y[3, :]
-    vc = Y[4, :]
-    delta_n = Y[5, :]
-    v_n = Y[6, :]
 
-    ai = A[i]
+def DY_3fld(i, Y, A, K, H):
+    dY = np.zeros((7, len(K)))
+    Phi = Y[0, :]
+    deltaG = Y[1, :]
+    vG = Y[2, :]
+    deltaC = Y[3, :]
+    vC = Y[4, :]
+    deltaN = Y[5, :]
+    vN = Y[6, :]
+
     Hi = H[i]
-    ybi = 1.68*ai*OmegaB0/(OmegaG0 + OmegaN0)
-    OmegaBi = OmegaB0 * ai**-3.
-    OmegaCi = OmegaC0 * ai**-3.
-    OmegaGi = OmegaG0 * ai**-4. 
-    OmegaNi = OmegaN0 * ai**-4
+    H0 = par.H0
+    ai = A[i]
+    ybi = 1.68*ai*par.OmegaB0/par.OmegaR0
+  
+    OmegaBi = par.OmegaB0 * ai**-3.
+    OmegaCi = par.OmegaC0 * ai**-3.
+    OmegaGi = par.OmegaG0 * ai**-4.
+    OmegaNi = par.OmegaN0 * ai**-4
+    
 
     # compute the derivatives of the perturbations.
-    Dphi = -Hi*phi + (3/2.*par.H0**2.*ai**2/K) *\
-        (4./3.*(OmegaGi*v_g + OmegaNi*v_n) + OmegaCi*vc + OmegaBi*v_g)
+    DPhi = -Hi*Phi + (3/2.*H0**2.*ai**2/K) *\
+        (4./3.*(OmegaGi*vG + OmegaNi*vN) + OmegaCi*vC + OmegaBi*vG)
 
-    Ddelta_g = -4./3.*K*v_g + 4*Dphi
-    Dv_g = (-Hi * ybi*v_g + K*delta_g/3)/(
-        4./3. + ybi) + K*phi
+    DdeltaG = -4./3.*K*vG + 4*DPhi
+    DvG = (-Hi * ybi*vG + K*deltaG/3)/(
+        4./3. + ybi) + K*Phi
 
-    Ddelta_c = -(K*vc) + 3*Dphi
-    Dvc = -Hi*vc + K*phi
+    DdeltaC = -K*vC + 3*DPhi
+    DvC = -Hi*vC + K*Phi
 
-    Ddelta_n = -4./3.*K*v_n + 4*Dphi
-    Dv_n = K*delta_n/4 + K*phi
+    DdeltaN = -4./3.*K*vN + 4*DPhi
+    DvN = K*deltaN/4 + K*Phi
 
-    Ddelta_n = -4./3.*K*v_n + 4*Dphi
-    Dv_n = K*delta_n/4. + K*phi
+    DdeltaN = -4./3.*K*vN + 4*DPhi
+    DvN = K*deltaN/4. + K*Phi
 
-    dY[0, :] = Dphi
-    dY[1, :] = Ddelta_g
-    dY[2, :] = Dv_g
-    dY[3, :] = Ddelta_c
-    dY[4, :] = Dvc
-    dY[5, :] = Ddelta_n
-    dY[6, :] = Dv_n
+    dY[0, :] = DPhi
+    dY[1, :] = DdeltaG
+    dY[2, :] = DvG
+    dY[3, :] = DdeltaC
+    dY[4, :] = DvC
+    dY[5, :] = DdeltaN
+    dY[6, :] = DvN
 
     return dY
 
-@numba.njit(cache=True)
-def solve_3fld(params):
-    # get background qualities
-    H = bg.get_H(params)
-    OmegaD = bg.get_OmegaD(params)
-    [OmegaB0, OmegaC0, OmegaG0, OmegaN0, OmegaL0, OmegaD_tau0] = params[0:6]
-    a_eq = (OmegaG0 + OmegaN0)/(OmegaB0 + OmegaC0)
+@numba.njit
+def DY_2fld(i, Y, A, K, H, wD, DwD, cs2D):
+    dY = np.zeros((5, len(K)))
+    Phi = Y[0, :]
+    deltaG = Y[1, :]
+    vG = Y[2, :]
+    deltaD = Y[3, :]
+    vD = Y[4, :]
 
-    # output array is half the length because RK4 throws out every other time step.
-    Y = np.zeros((par.N_T_SOLVE//2, 7, par.N_K_SOLVE))
+    # get background quantities for the current
+    # time step.
+    Hi = H[i]
+    H0 = par.H0
+    ai = A[i]
+    ybi = 1.68*ai*par.OmegaB0/par.OmegaR0
+    wDi = wD[i]
+    DwDi = DwD[i]
+    cs2Di = cs2D[:,i]
+    OmegaBi = par.OmegaB0 * ai**-3.
+    OmegaCi = par.OmegaC0 * ai**-3.
+    OmegaGi = par.OmegaG0 * ai**-4.
+    OmegaNi = par.OmegaN0 * ai**-4
+    
 
+    OmegaDi = OmegaNi + OmegaCi
+
+    # compute the derivatives of the perturbations.
+    DPhi = -Hi*Phi + (3/2.*H0**2.*ai**2/K) *\
+        (4./3.*(OmegaGi*vG) + OmegaBi*vG +(1+wDi)*OmegaDi*vD)
+
+    DdeltaG = -4./3.*K*vG + 4*DPhi
+    DvG = (-Hi * ybi*vG + K*deltaG/3)/(
+        4./3. + ybi) + K*Phi
+
+    DdeltaD = -(1+wDi)*(K*vD-3*DPhi) - 3*Hi*(cs2Di-wDi)*deltaD
+    DvD = -Hi*(1-3*wDi)*vD - vD*DwDi/(1+wDi) + K*deltaD*cs2Di/(1+wDi) + K*Phi
+
+    dY[0, :] = DPhi
+    dY[1, :] = DdeltaG
+    dY[2, :] = DvG
+    dY[3, :] = DdeltaD
+    dY[4, :] = DvD
+
+    return dY
+
+def solve_3fld(A, K):
+    N = len(A)
+    H =  A * par.H0 * np.sqrt(par.OmegaM0*A**-3 + par.OmegaR0*A**-4 +  par.OmegaL0 ) 
+    TAU =  par.tau0 + trapz(A, 1/(A * H))
+    
     # set initial conditions
-    phi0 = np.ones(par.N_K_SOLVE)
-    delta_g0 = -2*phi0*(1 + 3*(A[0]/a_eq))/16
-    v_g0 = -K/H[0] * (delta_g0/4 + (2*K**2 * (1 + (A[0]/a_eq)))*phi0) /\
-                            (9*H[0]**2 * (4./3. + (A[0]/a_eq)))
-    delta_c0 = .75 * delta_g0
-    v_c0 = v_g0
-    delta_n0 = delta_g0
-    v_n0 = v_g0
-    Y0 = np.stack((phi0, delta_g0, v_g0, delta_c0, v_c0, delta_n0, v_n0))
-    # set initial conditions:
-    Y[0,:,:] = Y0
+    y0 = par.a0/par.a_eq
+    Phi0 = np.ones(len(K))
+    deltaG0 = -2*Phi0*(1 + 3*y0/16)
+    vG0 = -K/(H[0]) * (deltaG0/4 + (2*K**2 * (1 + y0)*Phi0) /
+                              (9*(H[0])**2 * (4./3. + y0)))
+    deltaC0 = .75 * deltaG0
+    vC0 = vG0
+    deltaN0 = deltaG0
+    vN0 = vG0
 
-    for i in range(par.N_T_SOLVE//2-1):
-        h = TAU[i+2] - TAU[i]
-        k1 = h*DY_3fld(2*i,Y[i,:,:])
-        k2 = h*DY_3fld(2*i+1,Y[i,:,:]+k1/2)
-        k3 = h*DY_3fld(2*i+1,Y[i,:,:]+k2/2)
-        k4 = h*DY_3fld(2*i+2,Y[i,:,:]+k3)
-        Y[i+1,:,:] = Y[i,:,:] + k1/6 + k2/3 + k3/3 + k4/6
+    Y = np.zeros((N//2, 7, len(K)))
+    Y[0, :, :] = np.array([Phi0, deltaG0, vG0, deltaC0, vC0, deltaN0, vN0])
+    # RK4 implementation
+    for i in range(N//2-1):
+        ss = TAU[2*i+2] - TAU[2*i]
+        k1 = ss*DY_3fld(2*i, Y[i, :, :], A,K, H)
+        k2 = ss*DY_3fld(2*i+1, Y[i, :, :]+k1/2, A,K, H)
+        k3 = ss*DY_3fld(2*i+1, Y[i, :, :]+k2/2, A, K,H)
+        k4 = ss*DY_3fld(2*i+2, Y[i, :, :]+k3, A,K, H)
+
+        Y[i+1, :, :] = Y[i, :, :] + k1/6 + k2/3 + k3/3 + k4/6
     return Y
 
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    Y = solve_3fld(par.MLparams)
-    print(np.shape(Y))
-    plt.plot(Y[:,0, 200])
-    plt.show()
+@numba.njit
+def solve_2fld(A, K, wD, cs2D, deltaD0, vD0):
+     
+    N = len(A)
+    H =  A * par.H0 * np.sqrt(par.OmegaM0*A**-3 + par.OmegaR0*A**-4 +  par.OmegaL0 ) 
+    TAU =  par.tau0 + trapz(A, 1/(A * H))
+    DwD = deriv(TAU, wD)
     
+    # set initial conditions
+    y0 = par.a0/par.a_eq
+    Phi0 = np.ones(len(K))
+    deltaG0 = -2*Phi0*(1 + 3*y0/16)
+    vG0 = -K/(H[0]) * (deltaG0/4 + (2*K**2 * (1 + y0)*Phi0) /
+                              (9*(H[0])**2 * (4./3. + y0)))
+    deltaC0 = .75 * deltaG0
+    vC0 = vG0
+    deltaN0 = deltaG0
+    vN0 = vG0
+    
+    Y = np.zeros((N//2, 5, len(K)))
+    Y[0,0,:] = Phi0
+    Y[0,1,:] = deltaG0
+    Y[0,2,:] = vG0
+    Y[0,3,:] = deltaD0
+    Y[0,4,:] = vD0
+    
+    #Y[0, :, :] = np.array([Phi0, deltaG0, vG0, deltaD0, vD0])
+    # RK4 implementation
+    for i in range(N//2-1):
+        ss = TAU[2*i+2] - TAU[2*i]
+        k1 = ss*DY_2fld(2*i, Y[i, :, :], A, K, H, wD, DwD, cs2D)
+        k2 = ss*DY_2fld(2*i+1, Y[i, :, :]+k1/2, A, K, H, wD, DwD, cs2D)
+        k3 = ss*DY_2fld(2*i+1, Y[i, :, :]+k2/2, A, K, H, wD, DwD, cs2D)
+        k4 = ss*DY_2fld(2*i+2, Y[i, :, :]+k3, A, K, H, wD, DwD, cs2D)
+
+        Y[i+1, :, :] = Y[i, :, :] + k1/6 + k2/3 + k3/3 + k4/6
+    return Y
     
