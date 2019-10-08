@@ -1,0 +1,117 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3466,        109]
+NotebookOptionsPosition[      2864,         92]
+NotebookOutlinePosition[      3236,        108]
+CellTagsIndexPosition[      3193,        105]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"\[CapitalOmega]D", "=", 
+   RowBox[{
+    RowBox[{"\[CapitalOmega]N0", " ", 
+     SuperscriptBox["a", 
+      RowBox[{"-", "4"}]]}], " ", "+", " ", 
+    RowBox[{"\[CapitalOmega]C0", " ", 
+     SuperscriptBox["a", 
+      RowBox[{"-", "3"}]]}]}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.778445340766747*^9, 3.7784454037639847`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"ace7f7d8-c392-414f-b6fa-186fe8aa0a06"],
+
+Cell[BoxData[
+ RowBox[{"\[CapitalOmega]D", " ", "=", " ", 
+  RowBox[{"\[CapitalOmega]Di", " ", 
+   RowBox[{"Exp", "[", 
+    RowBox[{
+     RowBox[{"-", "3"}], 
+     RowBox[{
+      SubsuperscriptBox["\[Integral]", "a0", "a"], 
+      RowBox[{
+       FractionBox[
+        RowBox[{"(", 
+         RowBox[{"1", "+", "wD"}], ")"}], "ap"], 
+       RowBox[{"\[DifferentialD]", "ap"}]}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.7784454302959957`*^9, 3.7784455442912493`*^9}, {
+  3.7784455988965945`*^9, 3.7784456003313475`*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"07a1ff97-acce-484e-823f-01118f90130a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ln", 
+   RowBox[{"(", 
+    FractionBox["\[CapitalOmega]D", 
+     RowBox[{" ", "\[CapitalOmega]Di"}]], " ", ")"}]}], "=", " ", 
+  RowBox[{
+   RowBox[{"-", "3"}], 
+   RowBox[{
+    SubsuperscriptBox["\[Integral]", "a0", "a"], 
+    RowBox[{
+     FractionBox[
+      RowBox[{"(", 
+       RowBox[{"1", "+", "wD"}], ")"}], "ap"], 
+     RowBox[{"\[DifferentialD]", "ap"}]}]}]}]}]], "Input",
+ CellChangeTimes->{{3.7784454302959957`*^9, 3.7784455442912493`*^9}, {
+  3.7784455988965945`*^9, 
+  3.778445617326439*^9}},ExpressionUUID->"1adebb72-3b7e-40e0-aa34-\
+5d00fcd2a735"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    SubscriptBox["\[PartialD]", "a"], "ln"}], 
+   RowBox[{"(", 
+    FractionBox["\[CapitalOmega]D", 
+     RowBox[{" ", "\[CapitalOmega]Di"}]], " ", ")"}]}], "=", " ", 
+  RowBox[{
+   RowBox[{"-", "3"}], 
+   RowBox[{
+    SubsuperscriptBox["\[Integral]", "a0", "a"], 
+    RowBox[{
+     FractionBox[
+      RowBox[{"(", 
+       RowBox[{"1", "+", "wD"}], ")"}], "ap"], 
+     RowBox[{"\[DifferentialD]", "ap"}]}]}]}]}]], "Input",
+ CellChangeTimes->{{3.7784454302959957`*^9, 3.7784455442912493`*^9}, {
+  3.7784455988965945`*^9, 
+  3.7784456477244434`*^9}},ExpressionUUID->"3f3823f1-c792-48ca-b3d1-\
+f9bf680d6b8d"]
+},
+WindowSize->{751, 817},
+WindowMargins->{{Automatic, 64}, {-77, Automatic}},
+Magnification:>2. Inherited,
+FrontEndVersion->"12.0 for Microsoft Windows (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 442, 11, 57, "Input",ExpressionUUID->"ace7f7d8-c392-414f-b6fa-186fe8aa0a06"],
+Cell[1003, 33, 602, 15, 91, "Input",ExpressionUUID->"07a1ff97-acce-484e-823f-01118f90130a"],
+Cell[1608, 50, 597, 18, 91, "Input",ExpressionUUID->"1adebb72-3b7e-40e0-aa34-5d00fcd2a735"],
+Cell[2208, 70, 652, 20, 91, "Input",ExpressionUUID->"3f3823f1-c792-48ca-b3d1-f9bf680d6b8d"]
+}
+]
+*)
+

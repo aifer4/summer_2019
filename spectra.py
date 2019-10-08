@@ -54,6 +54,31 @@ def get_Cl(A, K, wD, cs2D, deltaD0, vD0):
     Cl_normed = l_list*(l_list + 1)*Cl * norm/(2*np.pi)
     return np.abs(Cl_normed)
 
+def get_Cl_3gdm(A, K, wC, cs2C, wN, cs2N):
+    # first compute mode evolution:
+    Y = modes.solve_3fld_gdm(A, K, wC, cs2C, wN, cs2N)
+    
+    SW = Y[-1, 0, :] + Y[-1,1, :]/4
+    ISW = par.DeltaPhi
+    DOP = Y[-1, 2, :]
+
+    SWsd = (SW+ISW)*np.exp(-(K*par.tau_s)**2)
+    DOPsd = DOP*np.exp(-(K*par.tau_s)**2)
+
+    # get the power spectrum
+    SWfill = np.interp(K_INT, K, SW)
+    DOPfill = np.interp(K_INT, K, DOP)
+    Dl = SWfill*JLK + DOPfill*(DJLK-JLK/(2*K_INT*(par.tau_now-par.tau_rec)))
+
+    T = np.exp(-2*(K_INT*par.tau_s)**2 - (.03*K_INT*par.tau_rec)**2)
+    Cl_itgd = Dl**2 * T / K_INT
+    Cl = integrate.trapz(k_grid, Cl_itgd)
+    # this normalization makes the most sense, but it still seems to be too large
+    # by a factor of two (at the first peak).
+    norm = (4)*np.pi * par.As * par.TCMB0**2
+    Cl_normed = l_list*(l_list + 1)*Cl * norm/(2*np.pi)
+    return np.abs(Cl_normed)
+
 def get_Cl_err():
     # Error:
     f_sky = 1.0  # fraction of sky

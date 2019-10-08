@@ -11,7 +11,7 @@ NK = 256 # number of wavenumbers for which to solve the  ODE
 NK_INT = 10000 # number of wavenumbers at which to evaluate bessel functions/integrate Cl
 
 # PCA settings
-NC = 128
+NC = 64
 w_basis = 'square'
 cs2_basis = 'square'
 
